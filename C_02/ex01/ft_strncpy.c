@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include <stdio.h>
 
-char	*ft_strcpy(char *dest, char *src, unsigned int n)
+char	*ft_strncpy(char *dest, char *src, unsigned int n)
 {
 	int	i;
 
@@ -30,11 +29,12 @@ char	*ft_strcpy(char *dest, char *src, unsigned int n)
 	}
 	return (dest);
 }
-
+/*
 int	main(void)
 {
 	char src[] = "Meow";
 	char dest[100];
-	printf("%s", ft_strcpy(dest, src, 10));
+	printf("%s", strncpy(dest, src, 3));
+	printf("%s", ft_strncpy(dest, src, 3));
 	return (0);
-}
+}*/

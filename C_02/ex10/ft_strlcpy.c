@@ -13,17 +13,15 @@
 #include <string.h>
 #include <stdio.h>
 
-unsigned int	ft_strlcpy(char *dest, const char *src, unsigned int size)
+unsigned int	ft_strlcpy(char *dest, char *src, unsigned int size)
 {
 	unsigned int	i;
 	unsigned int	src_len;
 
 	i = 0;
 	src_len = 0;
-
 	while (src[src_len] != '\0')
 		src_len++;
-
 	if (size > 0)
 	{
 		while (src[i] != '\0' && i < (size - 1))
@@ -33,15 +31,16 @@ unsigned int	ft_strlcpy(char *dest, const char *src, unsigned int size)
 		}
 		dest[i] = '\0';
 	}
-	return src_len;
+	return (src_len);
 }
-
+/*
 int	main(void)
 {
 	char dest[100];
 	char src[] = "Meowssssss";
+	printf("%u\n", strlcpy(dest,src,11));
 	printf("%u\n", ft_strlcpy(dest, src, 11));
 	printf("Destination: %s\n", dest);
 	return 0;
 }
-
+*/

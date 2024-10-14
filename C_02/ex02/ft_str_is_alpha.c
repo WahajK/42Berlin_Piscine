@@ -14,19 +14,19 @@
 
 int	ft_str_is_alpha(char *str)
 {
-	while(*str)
+	while (*str)
 	{
-		if(!((*str >= 'a' && *str <= 'z') || (*str >= 'A' && *str <= 'Z')))
+		if (!((*str >= 'a' && *str <= 'z') || (*str >= 'A' && *str <= 'Z')))
 		{
-			return 0;
+			return (0);
 		}
 		str++;
 	}
-	return 1;
+	return (1);
 }
-
+/*
 int	main(void)
 {
-	char arr[] = "MEOW!";
+	char arr[] = "MEOW";
 	printf("%d", ft_str_is_alpha(arr));
-}
+}*/

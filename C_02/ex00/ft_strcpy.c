@@ -28,6 +28,7 @@ int	main(void)
 {
 	char src[] = "Meowwwww";
 	char dest[100];
+	printf("%s", strcpy(dest, src));
 	printf("%s", ft_strcpy(dest, src));
 	return (0);
 }*/

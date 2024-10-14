@@ -12,21 +12,21 @@
 
 #include <stdio.h>
 
-int	ft_str_is_alpha(char *str)
+int	ft_str_is_uppercase(char *str)
 {
-	while(*str)
+	while (*str)
 	{
-		if(!(*str >= 'A' && *str <= 'Z'))
+		if (!(*str >= 'A' && *str <= 'Z'))
 		{
-			return 0;
+			return (0);
 		}
 		str++;
 	}
-	return 1;
+	return (1);
 }
-
+/*
 int	main(void)
 {
-	char arr[] = "MEOw";
-	printf("%d", ft_str_is_alpha(arr));
-}
+	char arr[] = "MEOW";
+	printf("%d", ft_str_is_uppercase(arr));
+}*/

@@ -26,9 +26,9 @@ int	ft_str_is_printable(char *str)
 	}
 	return (1);
 }
-
+/*
 int	main(void)
 {
-	char arr[] = "MEOw";
-	printf("%d", ft_str_is_alpha(arr));
-}
+	char arr[] = "MEOw\n";
+	printf("%d", ft_str_is_printable(arr));
+}*/

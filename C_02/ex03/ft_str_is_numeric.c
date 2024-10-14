@@ -10,22 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_str_is_alpha(char *str)
+int	ft_str_is_numeric(char *str)
 {
-	while(*str)
+	while (*str)
 	{
-		if(!(*str >= '0' && *str <= '9'))
+		if (!(*str >= '0' && *str <= '9'))
 		{
-			return 0;
+			return (0);
 		}
 		str++;
 	}
-	return 1;
+	return (1);
 }
-
-
+/*
 int	main(void)
 {
-	char arr[] = "1234!";
-	printf("%d", ft_str_is_alpha(arr));
-}
+	char arr[] = "1234";
+	printf("%d", ft_str_is_numeric(arr));
+}*/
