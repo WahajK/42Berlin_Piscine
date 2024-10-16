@@ -37,13 +37,13 @@ unsigned int	ft_strlcat(char *dest, char *src, unsigned int size)
 	dest[dest_len + j] = '\0';
 	return (dest_len + src_len);
 }
-
+/*
 #include <stdio.h>
 
 int main(void)
 {
 	char dest[20] = "Hello";
-	char src[] = " World";
+	char src[] = " Every Nyan!";
 	unsigned int size = 15;
 	unsigned int result;
 
@@ -52,4 +52,4 @@ int main(void)
 	printf("Total length: %u\n", result);
 
 	return 0;
-}
+}*/

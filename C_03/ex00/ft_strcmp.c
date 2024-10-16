@@ -25,7 +25,7 @@ int	ft_strcmp(char *s1, char *s2)
 	}
 	return (s1[i] - s2[i]);
 }
-
+/*
 #include <stdio.h>
 
 int main(void)
@@ -40,4 +40,4 @@ int main(void)
 	printf("Comparing '%s' and '%s': %d\n", str1, str4, ft_strcmp(str1, str4));
 
 	return 0;
-}
+}*/

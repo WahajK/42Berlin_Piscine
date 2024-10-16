@@ -30,17 +30,17 @@ char	*ft_strcat(char *dest, char *src)
 	dest[i] = '\0';
 	return (dest);
 }
-
+/*
 #include <stdio.h>
 
 int main(void)
 {
 	char dest[50] = "Hello, ";
-	char src[] = "ebery nyan!";
+	char src[] = "every nyan!";
 	
 	printf("Before strcat: %s\n", dest);
 	ft_strcat(dest, src);
 	printf("After strcat: %s\n", dest);
 	
 	return 0;
-}
+}*/

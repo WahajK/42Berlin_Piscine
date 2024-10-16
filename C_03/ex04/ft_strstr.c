@@ -18,9 +18,9 @@ char	*ft_strstr(char *str, char *to_find)
 	int	j;
 
 	i = 0;
-	j = 0;
 	while (str[i])
 	{
+		j = 0;
 		if (str[i] == to_find[j])
 		{
 			while (str[i + j] == to_find[j])
@@ -34,7 +34,7 @@ char	*ft_strstr(char *str, char *to_find)
 	}
 	return (0);
 }
-
+/*
 #include <stdio.h>
 
 int	main(void)
@@ -50,4 +50,4 @@ int	main(void)
 		printf("Not found\n");
 
 	return (0);
-}
+}*/
