@@ -4,213 +4,313 @@
 #include <stdio.h>
 #include <ctype.h>
 
-typedef struct s_dict
-{
-	int		number;
-	char	*word;
-	int		length;
+typedef struct s_dict {
+	char **numbers;
+	char **words;
+	int size;
 } t_dict;
-void	ft_putstr(char *str);
-int		get_line_count(char *fname);
-t_dict	*parse_dict(char *fname);
-int		get_line_count(char *fname);
-char	*ft_strdup(char *src);
-char	*get_next_line(int fd);
-int		ft_atoi(char *str);
-int		ft_strlen(char *str);
+
+void ft_putstr(char *str);
+char *ft_strdup(char *src);
+char *get_next_line(int fd);
+int ft_atoi(char *str);
+int ft_strlen(char *str);
 void print_number(t_dict *dictionary, char *num_str);
-int convert_to_word(t_dict *dictionary, int number);
+char *modify_string(char *string);
+void modify_prints(char *string, int length, char *new_ptr);
+char *ft_strcpy(char *dest, const char *src);
+int read_dictionary(const char *dict_file_name, t_dict *dict);
+void parse_dictionary_line(char *line_start, t_dict *dict, int index);
+void destroy_dictionary(t_dict *dict);
+int get_line_count(char *fname);
+int count_lines(const char *content, int file_size);
+int get_file_size(const char *file_name);
+int ft_strcmp(const char *s1, const char *s2);
+char *ft_strncpy(char *dest, const char *src, size_t n);
+void print_word(t_dict *dictionary, int value);
+void print_group(t_dict *dictionary, int group_value);
 
-int		main(int argc, char *argv[])
-{
-	t_dict *dict;
-	printf("argc: %d\n", argc);
-	if (argc == 2)
-		dict = parse_dict("numbers.dict");
-	else if (argc == 3)
-		dict = parse_dict(argv[1]);
-	else
-	{
+
+int main(int argc, char *argv[]) {
+	t_dict dict;
+	int flag;
+
+	if (argc == 2) {
+		flag = read_dictionary("numbers.dict", &dict);
+	} else if (argc == 3) {
+		flag = read_dictionary(argv[1], &dict);
+	} else {
 		ft_putstr("Error\n");
-		return (1);
+		return 1;
 	}
-	printf("dict[0].number: %d\n", dict[0].number);
-	print_number(dict, argv[argc - 1]);
-	return (0);
-}
-//This function is still not working
-void print_number(t_dict *dictionary, char *num_str)
-{
-    int number = ft_atoi(num_str);
-	int units = number % 10;
-    int tens = (number / 10) % 10;
-    int hundreds = (number / 100) % 10;
-    int thousands = (number / 1000) % 10;
-    int tenThousands = (number / 10000) % 10;
-    
-    if (!convert_to_word(dictionary, hundreds))
-        ft_putstr("Dict Error\n");
-}
-//This function is not working yet
-int convert_to_word(t_dict *dictionary, int number)
-{
-    int i = 0;
-    while (dictionary[i].number < 1000000)
-    {
-		printf("dictionary[%d].number: %d\n", i, dictionary[i].number);
-        if (dictionary[i].number == 100)
-        {
-            ft_putstr(dictionary[i].word);
-            ft_putstr("\n");
-            return (1);
-        }
-        i++;
-    }
-    return (0);
-}
-//Put this in utils
-void	ft_putstr(char *str)
-{
-	while(*str)
-		write(1, str++, 1);
-}
 
-/**
- * parse_dict - Parses a dictionary file and stores its contents in a t_dict array.
- * @fname: The name of the file to be parsed.
- *
- * This function reads the contents of the file specified by @fname, line by line,
- * and stores each line as an entry in a dynamically allocated array of t_dict structures.
- * Each line is expected to contain a number followed by a word, separated by a space.
- * The function returns a pointer to the array of t_dict structures.
- *
- * Return: A pointer to the array of t_dict structures, or NULL if an error occurs.
- */
-
-//Put this in parse_dict.c
-//This function needs some work, need to remove empty spaces and tabs from the string
-t_dict	*parse_dict(char *fname)
-{
-	int	fd;
-	char	*line;
-	t_dict	*dict;
-	
-	printf("%d\n", get_line_count(fname));
-	dict = malloc(sizeof(t_dict) * (get_line_count(fname) + 1));
-	if (!dict)
-		return NULL;
+	if (flag != 0) {
+		ft_putstr("Error\n");
+		return 1;
+	}
+	print_number(&dict, argv[argc - 1]);
+	destroy_dictionary(&dict);
+	return 0;
+}
+int ft_strcmp(const char *s1, const char *s2) {
+	while (*s1 && (*s1 == *s2)) {
+		s1++;
+		s2++;
+	}
+	return *(unsigned char *)s1 - *(unsigned char *)s2;
+}
+char *ft_strncpy(char *dest, const char *src, size_t n) {
+	size_t i;
+	for (i = 0; i < n && src[i] != '\0'; i++) {
+		dest[i] = src[i];
+	}
+	for (; i < n; i++) {
+		dest[i] = '\0';
+	}
+	return dest;
+}
+char *ft_strcpy(char *dest, const char *src) {
 	int i = 0;
-	fd = open(fname, O_RDONLY);
-	if (fd < 0)
-		return NULL;
-	int bytes_read=1;
-	char buffer[1024];
-	int line_count = 0;
-	while (bytes_read > 0)
-	{
-		//Reads a single character from the file
-		bytes_read = read(fd, &buffer[i], 1);
+	while (src[i] != '\0') {
+		dest[i] = src[i];
 		i++;
-		//If the character is a newline, we have read a complete line
-		if(buffer[i-1] == '\n')
-		{
-			buffer[i-1] = '\0';
-			dict[line_count].number = ft_atoi(buffer);
-			dict[line_count].word = ft_strdup(buffer);
-			dict[line_count].length = ft_strlen(buffer);
-			i = 0;
-			line_count++;
+	}
+	dest[i] = '\0';
+	return dest;
+}
+
+void print_number(t_dict *dictionary, char *num_str) 
+{
+	char suffix[][14] = {"", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", 
+	"octillion", "nonillion", "decillion", "undecillion"};
+	int len = ft_strlen(num_str);
+	int group_count = (len + 2) / 3;
+	int group_index = 0;
+	int num_index = 0;
+
+	while (group_index < group_count) {
+		int group_len = len % 3;
+		if (group_len == 0) {
+			group_len = 3;
+		}
+
+		char group[4] = {0};
+		ft_strncpy(group, &num_str[num_index], group_len);
+		num_index += group_len;
+		len -= group_len;
+
+		int group_value = ft_atoi(group);
+		if (group_value > 0) {
+			if (group_index > 0) {
+				ft_putstr(" ");
+			}
+			print_group(dictionary, group_value);
+			if (group_count - group_index - 1 > 0) {
+				ft_putstr(" ");
+				ft_putstr(suffix[group_count - group_index - 1]);
+			}
+		}
+		group_index++;
+	}
+	ft_putstr("\n");
+}
+
+void print_group(t_dict *dictionary, int group_value) {
+	if (group_value >= 100) {
+		print_word(dictionary, group_value / 100);
+		ft_putstr(" hundred");
+		group_value %= 100;
+		if (group_value > 0) {
+			ft_putstr(" ");
 		}
 	}
-	printf("%d\n", dict[10].number);
-	close(fd);
-	return dict;
+	if (group_value >= 20) {
+		print_word(dictionary, (group_value / 10) * 10);
+		group_value %= 10;
+		if (group_value > 0) {
+			ft_putstr("-");
+		}
+	}
+	if (group_value > 0) {
+		print_word(dictionary, group_value);
+	}
 }
-/**
- * @brief Counts the number of lines in a file.
- *
- * This function opens a file specified by the given filename, reads its content,
- * and counts the number of newline characters ('\n') to determine the number of lines.
- *
- * @param fname The name of the file to be read.
- * @return The number of lines in the file. Returns 0 if the file cannot be opened.
- */
-int get_line_count(char *fname)
-{
-	int fd;
+
+void print_word(t_dict *dictionary, int value) {
+	char num_str[12];
+	sprintf(num_str, "%d", value);
+	for (int i = 0; i < dictionary->size; i++) {
+		if (ft_strcmp(dictionary->numbers[i], num_str) == 0) {
+			ft_putstr(dictionary->words[i]);
+			return;
+		}
+	}
+	}
+void ft_putstr(char *str) {
+	while (*str) {
+		write(1, str++, 1);
+	}
+}
+
+int count_lines(const char *content, int file_size) {
+	int lines = 0;
+	for (int i = 0; i < file_size; i++) {
+		if (content[i] == '\n') {
+			lines++;
+		}
+	}
+	return lines;
+}
+
+int get_file_size(const char *file_name) {
+	int file_size = 0;
+	char content;
+	int fd = open(file_name, O_RDONLY);
+	if (fd == -1) {
+		return 0;
+	}
+	while (read(fd, &content, 1) == 1) {
+		file_size++;
+	}
+	close(fd);
+	return file_size;
+}
+
+int read_dictionary(const char *dict_file_name, t_dict *dict) {
+	int fd = open(dict_file_name, O_RDONLY);
+	if (fd == -1) {
+		return 1;
+	}
+
+	int file_size = get_file_size(dict_file_name);
+	if (file_size == 0) {
+		close(fd);
+		return 1;
+	}
+
+	char *content = (char *)malloc(file_size + 1);
+	if (!content) {
+		close(fd);
+		return 1;
+	}
+	read(fd, content, file_size);
+	content[file_size] = '\0';
+	close(fd);
+
+	int lines = count_lines(content, file_size);
+	dict->numbers = (char **)malloc(lines * sizeof(char *));
+	dict->words = (char **)malloc(lines * sizeof(char *));
+	if (!dict->numbers || !dict->words) {
+		free(content);
+		return 1;
+	}
+
+	int index = 0;
+	char *line_start = content;
+	for (int i = 0; i < file_size; i++) {
+		if (content[i] == '\n' || content[i] == '\0') {
+			content[i] = '\0';
+			parse_dictionary_line(line_start, dict, index);
+			index++;
+			line_start = &content[i + 1];
+		}
+	}
+	dict->size = index;
+	free(content);
+	return 0;
+}
+
+void destroy_dictionary(t_dict *dict) {
+	for (int i = 0; i < dict->size; i++) {
+		free(dict->numbers[i]);
+		free(dict->words[i]);
+	}
+	free(dict->numbers);
+	free(dict->words);
+}
+
+void parse_dictionary_line(char *line_start, t_dict *dict, int index) {
+	char *number = line_start;
+	char *word = NULL;
+
+	for (int j = 0; line_start[j] != '\0'; j++) {
+		if (line_start[j] == ':') {
+			line_start[j] = '\0';
+			word = &line_start[j + 1];
+			break;
+		}
+	}
+	while (*word == ' ') {
+		word++;
+	}
+
+	if (number && word) {
+		dict->numbers[index] = (char *)malloc(ft_strlen(number) + 1);
+		dict->words[index] = (char *)malloc(ft_strlen(word) + 1);
+		ft_strcpy(dict->numbers[index], number);
+		ft_strcpy(dict->words[index], word);
+	}
+}
+
+int get_line_count(char *fname) {
+	int fd = open(fname, O_RDONLY);
+	if (fd < 0) {
+		return 0;
+	}
+
 	int count = 0;
 	char buffer[1024];
 	int bytes_read;
-	int i;
-
-	fd = open(fname, O_RDONLY);
-	if (fd < 0)
-		return 0;
-	//Reads a block of data from the file and counts the number of newline characters
-	while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0)
-	{
-		for (i = 0; i < bytes_read; i++)
-		{
-			if (buffer[i] == '\n')
+	while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0) {
+		for (int i = 0; i < bytes_read; i++) {
+			if (buffer[i] == '\n') {
 				count++;
+			}
 		}
 	}
 	close(fd);
 	return count;
 }
-int	ft_atoi(char *str)
-{
+
+int ft_atoi(char *str) {
 	int i = 0;
-	int sign = 1;
 	int result = 0;
 
-	// Skip whitespace
-	while (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r'))
-		i++;
-	// Check for sign
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
+	while (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r')) {
 		i++;
 	}
-	// Convert digits to integer
-	while (str[i] >= '0' && str[i] <= '9')
-	{
+
+	if (str[i] == '-' || str[i] == '+') {
+		if (str[i] == '-') {
+			return -1;
+		}
+		i++;
+	}
+
+	while (str[i] >= '0' && str[i] <= '9') {
 		result = result * 10 + (str[i] - '0');
 		i++;
 	}
-	return (result * sign);
+	return result;
 }
-//Put this in utils
-int	ft_strlen(char *str)
-{
+
+int ft_strlen(char *str) {
 	int len = 0;
-	while (str[len])
+	while (str[len]) {
 		len++;
+	}
 	return len;
 }
 
-//Put this in utils
-//This function reads a single line from a file descriptor and returns it as a string inside a dynamically allocated buffer.
-char	*ft_strdup(char *src)
-{
-	int	len;
-	char	*dup;
-	int	i;
-
-	i = 0;
-	len = 0;
-	while (src[len])
-		len++;
-	dup = (char *)malloc(sizeof(char) * (len + 1));
-	if (!dup)
-		return (NULL);
-	while (src[i])
-	{
-		dup[i] = src[i];
-		i++;
+char *ft_strdup(char *src) {
+	int len = ft_strlen(src);
+	char *dup = (char *)malloc(sizeof(char) * (len + 1));
+	if (!dup) {
+		return NULL;
 	}
-	dup[i] = '\0';
-	return (dup);
+	for (int i = 0; i < len; i++) {
+		dup[i] = src[i];
+	}
+	dup[len] = '\0';
+	return dup;
 }
