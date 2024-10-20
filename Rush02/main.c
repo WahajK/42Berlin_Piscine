@@ -18,6 +18,8 @@ char	*ft_strdup(char *src);
 char	*get_next_line(int fd);
 int		ft_atoi(char *str);
 int		ft_strlen(char *str);
+void print_number(t_dict *dictionary, char *num_str);
+int convert_to_word(t_dict *dictionary, int number);
 
 int		main(int argc, char *argv[])
 {
@@ -33,7 +35,38 @@ int		main(int argc, char *argv[])
 		return (1);
 	}
 	printf("dict[0].number: %d\n", dict[0].number);
+	print_number(dict, argv[argc - 1]);
 	return (0);
+}
+//This function is still not working
+void print_number(t_dict *dictionary, char *num_str)
+{
+    int number = ft_atoi(num_str);
+	int units = number % 10;
+    int tens = (number / 10) % 10;
+    int hundreds = (number / 100) % 10;
+    int thousands = (number / 1000) % 10;
+    int tenThousands = (number / 10000) % 10;
+    
+    if (!convert_to_word(dictionary, hundreds))
+        ft_putstr("Dict Error\n");
+}
+//This function is not working yet
+int convert_to_word(t_dict *dictionary, int number)
+{
+    int i = 0;
+    while (dictionary[i].number < 1000000)
+    {
+		printf("dictionary[%d].number: %d\n", i, dictionary[i].number);
+        if (dictionary[i].number == 100)
+        {
+            ft_putstr(dictionary[i].word);
+            ft_putstr("\n");
+            return (1);
+        }
+        i++;
+    }
+    return (0);
 }
 //Put this in utils
 void	ft_putstr(char *str)
@@ -55,6 +88,7 @@ void	ft_putstr(char *str)
  */
 
 //Put this in parse_dict.c
+//This function needs some work, need to remove empty spaces and tabs from the string
 t_dict	*parse_dict(char *fname)
 {
 	int	fd;
@@ -89,7 +123,6 @@ t_dict	*parse_dict(char *fname)
 		}
 	}
 	printf("%d\n", dict[10].number);
-	dict[i].number = -1;
 	close(fd);
 	return dict;
 }
