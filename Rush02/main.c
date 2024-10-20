@@ -31,7 +31,8 @@ void print_word(t_dict *dictionary, int value);
 void print_group(t_dict *dictionary, int group_value);
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	t_dict dict;
 	int flag;
 
@@ -83,6 +84,22 @@ void print_number(t_dict *dictionary, char *num_str)
 {
 	char suffix[][14] = {"", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", 
 	"octillion", "nonillion", "decillion", "undecillion"};
+	int i = 0;
+	while ((num_str[i] >= 9 && num_str[i] <= 13) || (num_str[i] == ' '))
+	{
+		i++;
+	}
+	if(num_str[i] == '-')
+	{
+		ft_putstr("Error\n");
+		return;
+	}
+	while (num_str[i] >= '0' && num_str[i] <= '9')
+	{
+		i++;
+	}
+	num_str[i] = '\0';
+
 	int len = ft_strlen(num_str);
 	int group_count = (len + 2) / 3;
 	int group_index = 0;
