@@ -1,8 +1,0 @@
-Write me a code that read from a dict file the numbers and their translation and save them into key value pairs in a dict structure which has int number as the key and char *line as the value. The only allowed builtin functions are: write, malloc, free, open, read, close
-If you need any other parsing functions, create your own string methods and rename them by adding "ft_" at the start. The dict file looks something like this, you must make sure that you trim white spaces if any in between the words and get the correct string: 
-0: zero
-1: one
-2: two
-3: three
-4: four
-5: five

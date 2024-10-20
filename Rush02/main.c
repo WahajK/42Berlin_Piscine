@@ -1,8 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muhakhan <muhakhan@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/20 22:50:42 by muhakhan          #+#    #+#             */
+/*   Updated: 2024/10/20 22:50:44 by muhakhan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <ctype.h>
 
 typedef struct s_dict {
 	char **numbers;
@@ -165,13 +175,11 @@ void print_word(t_dict *dictionary, int value) {
 	int temp = value;
 	int len = 0;
 
-	// Calculate the length of the number
 	while (temp > 0) {
 		temp /= 10;
 		len++;
 	}
 
-	// Handle the case when value is 0
 	if (len == 0) {
 		num_str[0] = '0';
 		num_str[1] = '\0';
