@@ -155,7 +155,26 @@ void print_group(t_dict *dictionary, int group_value) {
 
 void print_word(t_dict *dictionary, int value) {
 	char num_str[12];
-	sprintf(num_str, "%d", value);
+	int temp = value;
+	int len = 0;
+
+	// Calculate the length of the number
+	while (temp > 0) {
+		temp /= 10;
+		len++;
+	}
+
+	// Handle the case when value is 0
+	if (len == 0) {
+		num_str[0] = '0';
+		num_str[1] = '\0';
+	} else {
+		num_str[len] = '\0';
+		while (value > 0) {
+			num_str[--len] = (value % 10) + '0';
+			value /= 10;
+		}
+	}
 	for (int i = 0; i < dictionary->size; i++) {
 		if (ft_strcmp(dictionary->numbers[i], num_str) == 0) {
 			ft_putstr(dictionary->words[i]);
