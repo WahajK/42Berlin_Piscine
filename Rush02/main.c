@@ -29,7 +29,7 @@ int ft_strcmp(const char *s1, const char *s2);
 char *ft_strncpy(char *dest, const char *src, size_t n);
 void print_word(t_dict *dictionary, int value);
 void print_group(t_dict *dictionary, int group_value);
-
+int sanitize_number(char *num_str);
 
 int main(int argc, char *argv[])
 {
@@ -44,9 +44,8 @@ int main(int argc, char *argv[])
 		ft_putstr("Error\n");
 		return 1;
 	}
-
 	if (flag != 0) {
-		ft_putstr("Error\n");
+		ft_putstr("Dict Error\n");
 		return 1;
 	}
 	print_number(&dict, argv[argc - 1]);
@@ -62,11 +61,14 @@ int ft_strcmp(const char *s1, const char *s2) {
 }
 char *ft_strncpy(char *dest, const char *src, size_t n) {
 	size_t i;
-	for (i = 0; i < n && src[i] != '\0'; i++) {
+	i = 0;
+	while (i < n && src[i] != '\0') {
 		dest[i] = src[i];
+		i++;
 	}
-	for (; i < n; i++) {
+	while (i < n) {
 		dest[i] = '\0';
+		i++;
 	}
 	return dest;
 }
@@ -101,6 +103,11 @@ void print_number(t_dict *dictionary, char *num_str)
 	num_str[i] = '\0';
 
 	int len = ft_strlen(num_str);
+	if(len > 39)
+	{
+		ft_putstr("Dict Error\n");
+		return;
+	}
 	int group_count = (len + 2) / 3;
 	int group_index = 0;
 	int num_index = 0;
@@ -175,13 +182,15 @@ void print_word(t_dict *dictionary, int value) {
 			value /= 10;
 		}
 	}
-	for (int i = 0; i < dictionary->size; i++) {
+	int i = 0;
+	while (i < dictionary->size) {
 		if (ft_strcmp(dictionary->numbers[i], num_str) == 0) {
 			ft_putstr(dictionary->words[i]);
 			return;
 		}
+		i++;
 	}
-	}
+}
 void ft_putstr(char *str) {
 	while (*str) {
 		write(1, str++, 1);
@@ -190,10 +199,12 @@ void ft_putstr(char *str) {
 
 int count_lines(const char *content, int file_size) {
 	int lines = 0;
-	for (int i = 0; i < file_size; i++) {
+	int i = 0;
+	while (i < file_size) {
 		if (content[i] == '\n') {
 			lines++;
 		}
+		i++;
 	}
 	return lines;
 }
@@ -212,7 +223,9 @@ int get_file_size(const char *file_name) {
 	return file_size;
 }
 
-int read_dictionary(const char *dict_file_name, t_dict *dict) {
+int read_dictionary(const char *dict_file_name, t_dict *dict) 
+{
+	int flag;
 	int fd = open(dict_file_name, O_RDONLY);
 	if (fd == -1) {
 		return 1;
@@ -240,26 +253,44 @@ int read_dictionary(const char *dict_file_name, t_dict *dict) {
 		free(content);
 		return 1;
 	}
-
 	int index = 0;
 	char *line_start = content;
-	for (int i = 0; i < file_size; i++) {
+	int i = 0;
+	while (i < file_size) {
 		if (content[i] == '\n' || content[i] == '\0') {
 			content[i] = '\0';
 			parse_dictionary_line(line_start, dict, index);
+			flag = sanitize_number(dict->numbers[index]);
+			if (flag == 1)
+				return 1;
 			index++;
 			line_start = &content[i + 1];
 		}
+		i++;
 	}
 	dict->size = index;
 	free(content);
 	return 0;
 }
-
+int sanitize_number(char *num_str) 
+{
+	int i = 0;
+	while (num_str[i] != '\0')
+	{
+		if (num_str[i] < '0' || num_str[i] > '9')
+		{
+			return 1;
+		}
+		i++;
+	}
+	return 0;
+}
 void destroy_dictionary(t_dict *dict) {
-	for (int i = 0; i < dict->size; i++) {
+	int i = 0;
+	while (i < dict->size) {
 		free(dict->numbers[i]);
 		free(dict->words[i]);
+		i++;
 	}
 	free(dict->numbers);
 	free(dict->words);
@@ -269,12 +300,16 @@ void parse_dictionary_line(char *line_start, t_dict *dict, int index) {
 	char *number = line_start;
 	char *word = NULL;
 
-	for (int j = 0; line_start[j] != '\0'; j++) {
-		if (line_start[j] == ':') {
+	int j = 0;
+	while (line_start[j] != '\0')
+	{
+		if (line_start[j] == ':') 
+		{
 			line_start[j] = '\0';
 			word = &line_start[j + 1];
 			break;
 		}
+		j++;
 	}
 	while (*word == ' ') {
 		word++;
@@ -298,10 +333,12 @@ int get_line_count(char *fname) {
 	char buffer[1024];
 	int bytes_read;
 	while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0) {
-		for (int i = 0; i < bytes_read; i++) {
+		int i = 0;
+		while (i < bytes_read) {
 			if (buffer[i] == '\n') {
 				count++;
 			}
+			i++;
 		}
 	}
 	close(fd);
@@ -344,8 +381,10 @@ char *ft_strdup(char *src) {
 	if (!dup) {
 		return NULL;
 	}
-	for (int i = 0; i < len; i++) {
+	int i = 0;
+	while (i < len) {
 		dup[i] = src[i];
+		i++;
 	}
 	dup[len] = '\0';
 	return dup;
